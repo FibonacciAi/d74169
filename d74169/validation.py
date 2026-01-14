@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 from .sonar import PrimeSonar, sieve_primes_simple, is_prime_power, HAS_NUMBA
 
 
-@dataclass(slots=True)
+@dataclass
 class BenchmarkResult:
     """Results from a benchmark run."""
     range_max: int
