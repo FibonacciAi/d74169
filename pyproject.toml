@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "d74169"
 version = "2.1.0"
 authors = [
-    { name = "Dimitri Stefanopoulos", email = "d74169@example.com" }
+    { name = "@d74169" }
 ]
 description = "Prime detection via Riemann zeros - high-performance inverse scattering"
 readme = "README.md"

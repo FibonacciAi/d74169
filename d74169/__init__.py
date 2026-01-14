@@ -31,12 +31,12 @@ The Conjecture:
     The Riemann zeros are eigenvalues of a modular Hamiltonian where
     pi emerges as the self-dual fixed point of spectral coherence.
 
-Author: @d74169 (Dimitri Stefanopoulos)
+Author: @d74169
 License: MIT
 """
 
 __version__ = "2.1.0"
-__author__ = "Dimitri Stefanopoulos"
+__author__ = "@d74169"
 
 from .sonar import (
     PrimeSonar,

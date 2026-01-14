@@ -245,7 +245,7 @@ If you use this package in research, please cite:
 
 ```bibtex
 @software{d74169,
-  author = {Stefanopoulos, Dimitri},
+  author = {@d74169},
   title = {d74169: Prime Sonar via Riemann Zeros},
   version = {2.1.0},
   year = {2025},
