@@ -35,7 +35,7 @@ Author: @d74169
 License: MIT
 """
 
-__version__ = "2.1.0"
+__version__ = "2.2.0"
 __author__ = "@d74169"
 
 from .sonar import (
@@ -58,6 +58,16 @@ from .validation import (
     full_validation,
     BenchmarkResult,
 )
+from .advanced import (
+    PrimeStructures,
+    TwinPrime,
+    GoldbachPair,
+    ZeroReconstructor,
+    MinimumEncoding,
+    analyze_prime_structures,
+    reconstruct_zeros_from_primes,
+    find_optimal_encoding,
+)
 
 __all__ = [
     # Core
@@ -77,6 +87,15 @@ __all__ = [
     'stress_test',
     'full_validation',
     'BenchmarkResult',
+    # Advanced
+    'PrimeStructures',
+    'TwinPrime',
+    'GoldbachPair',
+    'ZeroReconstructor',
+    'MinimumEncoding',
+    'analyze_prime_structures',
+    'reconstruct_zeros_from_primes',
+    'find_optimal_encoding',
     # Data
     'BUNDLED_ZEROS',
     'HAS_NUMBA',
