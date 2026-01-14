@@ -1,5 +1,9 @@
 # d74169 - Prime Sonar via Riemann Zeros
 
+[![CI](https://github.com/FibonacciAi/d74169/actions/workflows/ci.yml/badge.svg)](https://github.com/FibonacciAi/d74169/actions/workflows/ci.yml)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 > **The @d74169 Conjecture**: The Riemann zeta zeros holographically encode the prime numbers. Pi emerges as the self-dual fixed point of spectral coherence.
 
 ## Installation
