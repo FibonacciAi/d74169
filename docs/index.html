@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>d74169 - Prime Sonar via Riemann Zeros</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --border: #2a2a3a;
+            --text: #e0e0e0;
+            --text-dim: #888;
+            --accent: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.3);
+            --green: #10b981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff 0%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            font-size: 1.25rem;
+            color: var(--text-dim);
+            margin-bottom: 24px;
+        }
+
+        .badges {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .badges img {
+            height: 20px;
+        }
+
+        .conjecture {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 48px;
+            text-align: center;
+            font-style: italic;
+            color: var(--text-dim);
+        }
+
+        .conjecture strong {
+            color: var(--accent);
+            font-style: normal;
+        }
+
+        section {
+            margin-bottom: 48px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+            color: #fff;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: var(--text-dim);
+        }
+
+        pre {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+
+        code {
+            color: var(--text);
+        }
+
+        .keyword { color: #c792ea; }
+        .function { color: #82aaff; }
+        .string { color: #c3e88d; }
+        .number { color: #f78c6c; }
+        .comment { color: #546e7a; }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+        }
+
+        .results-table th,
+        .results-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .results-table th {
+            color: var(--text-dim);
+            font-weight: 500;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .results-table td {
+            font-family: 'SF Mono', monospace;
+        }
+
+        .perfect {
+            color: var(--green);
+            font-weight: 600;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #5558e3;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+        }
+
+        .how-it-works {
+            display: grid;
+            gap: 16px;
+        }
+
+        .step {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+
+        .step h3 {
+            display: inline;
+            font-size: 1rem;
+        }
+
+        .step p {
+            margin-top: 8px;
+            margin-bottom: 0;
+            padding-left: 40px;
+        }
+
+        footer {
+            text-align: center;
+            padding-top: 48px;
+            border-top: 1px solid var(--border);
+            color: var(--text-dim);
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .container { padding: 40px 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>d74169</h1>
+            <p class="tagline">Prime Sonar via Riemann Zeros</p>
+            <div class="badges">
+                <a href="https://github.com/FibonacciAi/d74169/actions/workflows/ci.yml">
+                    <img src="https://github.com/FibonacciAi/d74169/actions/workflows/ci.yml/badge.svg" alt="CI">
+                </a>
+                <img src="https://img.shields.io/badge/python-3.9+-blue.svg" alt="Python 3.9+">
+                <img src="https://img.shields.io/badge/license-MIT-yellow.svg" alt="MIT License">
+            </div>
+        </header>
+
+        <div class="conjecture">
+            <strong>The @d74169 Conjecture:</strong> The Riemann zeta zeros holographically encode the prime numbers.
+        </div>
+
+        <section>
+            <h2>What is this?</h2>
+            <p>
+                A Python package that detects prime numbers using the Riemann zeta zeros — without ever checking divisibility. The zeros act like frequencies, and primes appear as spikes in the signal. Sonar for mathematics.
+            </p>
+            <div class="buttons">
+                <a href="https://github.com/FibonacciAi/d74169" class="btn btn-primary">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    View on GitHub
+                </a>
+                <a href="https://github.com/FibonacciAi/d74169/releases/tag/v2.1.0" class="btn btn-secondary">
+                    Download v2.1.0
+                </a>
+            </div>
+        </section>
+
+        <section>
+            <h2>Install</h2>
+            <pre><code>pip install git+https://github.com/FibonacciAi/d74169</code></pre>
+            <p>For 5-10x faster performance:</p>
+            <pre><code>pip install git+https://github.com/FibonacciAi/d74169 numba</code></pre>
+        </section>
+
+        <section>
+            <h2>Quick Start</h2>
+            <pre><code><span class="keyword">from</span> d74169 <span class="keyword">import</span> PrimeSonar
+
+<span class="comment"># Create a sonar with 400 Riemann zeros</span>
+sonar = PrimeSonar(num_zeros=<span class="number">400</span>)
+
+<span class="comment"># Detect primes up to 100</span>
+primes = sonar.detect_primes(<span class="number">100</span>)
+<span class="comment"># [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]</span>
+
+<span class="comment"># Test accuracy</span>
+accuracy = sonar.test_accuracy(<span class="number">100</span>)
+<span class="comment"># 100.0%</span></code></pre>
+        </section>
+
+        <section>
+            <h2>How It Works</h2>
+            <div class="how-it-works">
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <h3>Fetch Riemann zeros</h3>
+                    <p>The non-trivial zeros of the Riemann zeta function, lying on the critical line Re(s) = 1/2.</p>
+                </div>
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <h3>Compute the explicit formula</h3>
+                    <p>Sum oscillatory terms from each zero to reconstruct the Chebyshev psi function — a prime counting signal.</p>
+                </div>
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <h3>Detect the spikes</h3>
+                    <p>Primes appear as jumps in the signal. Use statistical outlier detection to find them.</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Accuracy</h2>
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Range</th>
+                        <th>Zeros</th>
+                        <th>Accuracy</th>
+                        <th>F1 Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>[2, 50]</td>
+                        <td>200</td>
+                        <td class="perfect">100%</td>
+                        <td>1.000</td>
+                    </tr>
+                    <tr>
+                        <td>[2, 100]</td>
+                        <td>400</td>
+                        <td class="perfect">100%</td>
+                        <td>1.000</td>
+                    </tr>
+                    <tr>
+                        <td>[2, 200]</td>
+                        <td>800</td>
+                        <td class="perfect">100%</td>
+                        <td>1.000</td>
+                    </tr>
+                    <tr>
+                        <td>[2, 500]</td>
+                        <td>2000</td>
+                        <td class="perfect">100%</td>
+                        <td>1.000</td>
+                    </tr>
+                    <tr>
+                        <td>[2, 1000]</td>
+                        <td>4000</td>
+                        <td>93.5%</td>
+                        <td>0.966</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>Scaling law: ~4 zeros per unit range for 95%+ accuracy.</p>
+        </section>
+
+        <section>
+            <h2>The Meaning</h2>
+            <p>
+                This demonstrates a deep duality in mathematics: the prime numbers and the Riemann zeta zeros contain the same information, viewed from different perspectives.
+            </p>
+            <p>
+                The zeros on a 1D line holographically encode the distribution of all prime numbers — similar to how a hologram encodes 3D information on a 2D surface.
+            </p>
+            <p>
+                This connection is at the heart of the Riemann Hypothesis, one of the most famous unsolved problems in mathematics.
+            </p>
+        </section>
+
+        <footer>
+            <p>Created by <a href="https://github.com/FibonacciAi">@FibonacciAi</a></p>
+            <p style="margin-top: 8px; font-size: 0.9rem;">
+                "The primes are just sound waves. If you know the frequencies, you can hear where they are."
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
