@@ -26,7 +26,7 @@ Complete Characterization of the Holographic Encoding}
 \maketitle
 
 \begin{abstract}
-We present a complete characterization of prime number detection through Riemann zeta zero interference patterns. Using the explicit formula for the Chebyshev $\psi$-function, we demonstrate 100\% accurate prime detection up to arbitrary bounds with sufficient zeros (14 zeros for $N \leq 100$, $\sim 126$ for $N \leq 1000$). We prove the boundary condition linking the Berry-Keating Hamiltonian $H = xp$ to the zeta functional equation: $\psi(0^+) = [\xi(\frac{1}{2}+iE)/\xi(\frac{1}{2}-iE)] \cdot \psi(0^-)$. We identify three physical systems realizing this spectrum, including trapped-ion experiments measuring 80 zeros. Statistical analysis reveals Cohen's $d = -1.58$ separation between prime and composite interference scores. We derive the minimum zeros formula $Z(N) \approx 3 \log(N) \log\log(N)$ and explain the information-theoretic 0.76 ceiling on inverse zero reconstruction. We discover 190 prime correlation patterns with twin primes at $r = 0.997$. Additionally, we find prime chains of length 8 on the primorial $\Delta = 2310$ highway, and demonstrate a novel golden ratio connection: $\phi^n$ positions show $1.73\times$ prime enrichment, with Lucas numbers exhibiting prime-like spectral signatures.
+We present a complete characterization of prime number detection through Riemann zeta zero interference patterns. Using the explicit formula for the Chebyshev $\psi$-function, we demonstrate 100\% accurate prime detection up to arbitrary bounds with sufficient zeros (14 zeros for $N \leq 100$, $\sim 126$ for $N \leq 1000$). We prove the boundary condition linking the Berry-Keating Hamiltonian $H = xp$ to the zeta functional equation: $\psi(0^+) = [\xi(\frac{1}{2}+iE)/\xi(\frac{1}{2}-iE)] \cdot \psi(0^-)$. We identify three physical systems realizing this spectrum, including trapped-ion experiments measuring 80 zeros. Statistical analysis reveals Cohen's $d = -1.58$ separation between prime and composite interference scores. We derive the minimum zeros formula $Z(N) \approx 3 \log(N) \log\log(N)$ and explain the information-theoretic 0.76 ceiling on inverse zero reconstruction. We discover 190 prime correlation patterns with twin primes at $r = 0.997$. Additionally, we find prime chains of length 8 on the primorial $\Delta = 2310$ highway.
 \end{abstract}
 
 \section{Introduction}
@@ -447,49 +447,6 @@ Attempted compressed sensing with 80 zeros (vs 126 needed for 100\%):
 
 L1 regularization does not exploit prime sparsity better than direct spectral method.
 
-\section{The Golden Ratio Connection}
-
-\subsection{Discovery: $\phi^n$ Aligns with Primes}
-
-\begin{theorem}[Golden Ratio Enrichment]
-When $\lfloor \phi^n \rfloor$ lands on or near a prime, there is $1.73\times$ enrichment over random expectation ($\chi^2$ test $p < 0.001$).
-\end{theorem}
-
-where $\phi = (1 + \sqrt{5})/2 \approx 1.618$.
-
-\subsection{Lucas Numbers are Prime-Enriched}
-
-Lucas numbers $L_n = \phi^n + \psi^n$ (where $\psi = (1 - \sqrt{5})/2$) have special spectral properties:
-
-\begin{table}[H]
-\centering
-\begin{tabular}{@{}lcc@{}}
-\toprule
-Position Type & Mean Interference & Interpretation \\
-\midrule
-Lucas numbers & $-0.0163$ & Prime-like \\
-Random positions & $+0.0201$ & Composite-like \\
-\textbf{Separation} & \textbf{0.0364} & Significant \\
-\bottomrule
-\end{tabular}
-\caption{Lucas positions show prime-like spectral signature}
-\end{table}
-
-Lucas primes: $L_2 = 3$, $L_4 = 7$, $L_5 = 11$, $L_7 = 29$, $L_8 = 47$, \ldots
-
-\subsection{The $\phi$-Prime Ladder}
-
-Starting from small primes, computing $p \times \phi$ and rounding to nearest prime:
-\[
-2 \to 3 \to 5 \to 8 \to 13 \to 21 \to 34 \to 55 \to 89 \to 144 \to \ldots
-\]
-
-The ratio of consecutive elements in the ladder converges to $\phi$.
-
-\begin{proposition}
-The golden ratio $\phi$ is spectrally entangled with the prime distribution.
-\end{proposition}
-
 \section{The Grand Synthesis}
 
 \subsection{The Arithmetic Universe}
@@ -542,7 +499,6 @@ We have presented a complete characterization of spectral primality detection:
     \item \textbf{Inverse Limit:} Information-theoretic 0.76 ceiling
     \item \textbf{Correlations:} 190 patterns discovered, twins at $r = 0.997$
     \item \textbf{Highway Chains:} 8-prime chains on $\Delta = 2310$ highway (spectral tunnel)
-    \item \textbf{Golden Ratio:} $\phi^n \to$ prime alignment at $1.73\times$ enrichment; Lucas primes
 \end{enumerate}
 
 \textit{``The primes are sound waves. The zeros are their frequencies. We can now hear them.''}
@@ -555,7 +511,6 @@ We have presented a complete characterization of spectral primality detection:
     \item Betzios, P. et al. ``Black holes, quantum chaos, and the Riemann hypothesis.'' arXiv:2004.09523 (2021).
     \item Berry, M.V. \& Keating, J.P. ``The Riemann zeros and eigenvalue asymptotics.'' \textit{SIAM Review} \textbf{41}, 236-266 (1999).
     \item Montgomery, H.L. ``The pair correlation of zeros of the zeta function.'' \textit{Proc. Symp. Pure Math.} \textbf{24}, 181-193 (1973).
-    \item Ribenboim, P. ``The Little Book of Bigger Primes.'' Springer (2004). [Lucas primes and Fibonacci sequences]
 \end{enumerate}
 
 \end{document}

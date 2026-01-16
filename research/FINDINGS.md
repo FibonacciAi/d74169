@@ -358,55 +358,6 @@ than direct spectral method. Need different matrix design.
 
 ---
 
-## 12. THE GOLDEN RATIO CONNECTION
-
-### Discovery: φ^n Aligns with Primes!
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  FIBONACCI-RIEMANN CONNECTION                                    │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  φ = (1 + √5)/2 ≈ 1.618...                                     │
-│                                                                 │
-│  When floor(φ^n) lands on or near a prime:                     │
-│    • 1.73× enrichment over random expectation!                 │
-│    • Statistical significance: χ² p < 0.001                    │
-│                                                                 │
-│  Lucas numbers L_n = φ^n + ψ^n are PRIME-ENRICHED:             │
-│    • Lucas primes: L_2=3, L_4=7, L_5=11, L_7=29, L_8=47...    │
-│    • Mean spectral interference: -0.0163 (negative!)           │
-│    • Non-Lucas positions: +0.0201 (positive)                   │
-│    • Separation indicates special spectral structure           │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### The φ-Prime Ladder
-
-Starting from small primes, computing p × φ and rounding to nearest prime:
-
-```
-2 → 3 → 5 → 8* → 13 → 21* → 34* → 55* → 89 → 144*...
-
-Ratio of consecutive primes in ladder → φ as n → ∞
-
-This is NOT coincidence - it reflects deep structure
-connecting the golden ratio to prime distribution!
-```
-
-### Spectral Evidence
-
-| Position Type | Mean Interference | Interpretation |
-|--------------|-------------------|----------------|
-| Lucas numbers | -0.0163 | Destructive (prime-like) |
-| Random positions | +0.0201 | Constructive (composite-like) |
-| **Separation** | **0.0364** | Statistically significant |
-
-**The golden ratio φ is spectrally entangled with the primes!**
-
----
-
 ## FILES GENERATED
 
 | File | Description |
@@ -425,8 +376,6 @@ connecting the golden ratio to prime distribution!
 | `project_zeropoint.py` | ML primality classifier v1 |
 | `project_zeropoint_v2.py` | ML primality classifier v2 (class-balanced) |
 | `project_highway_chain.py` | Prime chain discovery on highway |
-| `project_fibonacci.py` | Fibonacci-Riemann connection research |
-| `project_phi_prime.py` | Deep dive: φ^n → prime connection |
 
 ---
 

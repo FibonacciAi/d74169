@@ -683,65 +683,6 @@ reconstructed = zr.reconstruct_zeros(num_zeros=<span class="number">20</span>)
         </section>
 
         <section>
-            <h2>The Golden Ratio Connection <span class="paper-badge">DISCOVERY</span></h2>
-            <div class="insight-box" style="border-color: #fbbf24; background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);">
-                <h3 style="color: #fbbf24;">φ and Primes Are Linked</h3>
-                <p>The golden ratio φ = 1.618... appears naturally in prime distribution through the spectral lens.</p>
-                <span class="big-number" style="color: #fbbf24;">φ = (1+√5)/2</span>
-            </div>
-
-            <p><strong>Discovery 1:</strong> Powers of φ hit primes <strong>1.73× more often</strong> than random:</p>
-            <table class="results-table">
-                <thead>
-                    <tr>
-                        <th>n</th>
-                        <th>φⁿ (rounded)</th>
-                        <th>Prime?</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>2</td><td>3</td><td class="perfect">Yes</td></tr>
-                    <tr><td>4</td><td>7</td><td class="perfect">Yes</td></tr>
-                    <tr><td>5</td><td>11</td><td class="perfect">Yes</td></tr>
-                    <tr><td>7</td><td>29</td><td class="perfect">Yes</td></tr>
-                    <tr><td>8</td><td>47</td><td class="perfect">Yes</td></tr>
-                    <tr><td>11</td><td>199</td><td class="perfect">Yes</td></tr>
-                    <tr><td>13</td><td>521</td><td class="perfect">Yes</td></tr>
-                    <tr><td>17</td><td>3571</td><td class="perfect">Yes</td></tr>
-                    <tr><td>19</td><td>9349</td><td class="perfect">Yes</td></tr>
-                </tbody>
-            </table>
-            <p style="font-size: 0.9rem; color: var(--text-dim);">These are the <strong>Lucas primes</strong>: L<sub>n</sub> = φⁿ + ψⁿ where ψ = 1-φ</p>
-
-            <p><strong>Discovery 2:</strong> The φ-Prime Ladder converges <em>exactly</em> to φ:</p>
-            <pre><code><span class="comment"># Start at 2, multiply by φ, snap to nearest prime</span>
-2 → 3 → 5 → 7 → 11 → 19 → 31 → 53 → 89 → 149 → 241...
-
-Mean ratio: <span class="number">1.6181</span>
-φ:          <span class="number">1.6180</span>
-Deviation:  <span class="number">0.00%</span></code></pre>
-
-            <p><strong>Discovery 3:</strong> Lucas numbers have <strong>lower d74169 scores</strong> (more "prime-like"):</p>
-            <div class="stat-grid">
-                <div class="stat-card" style="border-color: #fbbf24;">
-                    <div class="value" style="color: #fbbf24;">-0.016</div>
-                    <div class="label">Lucas/φⁿ Score</div>
-                </div>
-                <div class="stat-card">
-                    <div class="value">+0.010</div>
-                    <div class="label">Fibonacci Score</div>
-                </div>
-                <div class="stat-card">
-                    <div class="value" style="color: var(--text-dim);">+0.020</div>
-                    <div class="label">Random Score</div>
-                </div>
-            </div>
-            <p>
-                The golden ratio encodes prime structure: φⁿ positions are spectrally "tuned" to primality, creating a bridge between Fibonacci mathematics and the Riemann zeros.
-            </p>
-        </section>
-
-        <section>
             <h2>Install</h2>
             <pre><code>pip install git+https://github.com/FibonacciAi/d74169</code></pre>
             <p>For 5-10x faster performance:</p>

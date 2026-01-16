@@ -8,7 +8,7 @@
 
 ## Abstract
 
-We present a complete characterization of prime number detection through Riemann zeta zero interference patterns. Using the explicit formula for the Chebyshev ψ-function, we demonstrate 100% accurate prime detection up to arbitrary bounds with sufficient zeros (14 zeros for N ≤ 100, ~126 for N ≤ 1000). We prove the boundary condition linking the Berry-Keating Hamiltonian H = xp to the zeta functional equation: ψ(0+) = [ξ(½+iE)/ξ(½-iE)] · ψ(0-). We identify three physical systems realizing this spectrum, including trapped-ion experiments measuring 80 zeros. Statistical analysis reveals Cohen's d = -1.58 separation between prime and composite interference scores. We derive the minimum zeros formula Z(N) ≈ 3 log(N) log(log(N)) and explain the information-theoretic 0.76 ceiling on inverse zero reconstruction. We discover 190 prime correlation patterns with twin primes at r = 0.997. Additionally, we find prime chains of length 8 on the primorial Δ=2310 highway, and demonstrate a novel golden ratio connection: φ^n positions show 1.73× prime enrichment, with Lucas numbers exhibiting prime-like spectral signatures.
+We present a complete characterization of prime number detection through Riemann zeta zero interference patterns. Using the explicit formula for the Chebyshev ψ-function, we demonstrate 100% accurate prime detection up to arbitrary bounds with sufficient zeros (14 zeros for N ≤ 100, ~126 for N ≤ 1000). We prove the boundary condition linking the Berry-Keating Hamiltonian H = xp to the zeta functional equation: ψ(0+) = [ξ(½+iE)/ξ(½-iE)] · ψ(0-). We identify three physical systems realizing this spectrum, including trapped-ion experiments measuring 80 zeros. Statistical analysis reveals Cohen's d = -1.58 separation between prime and composite interference scores. We derive the minimum zeros formula Z(N) ≈ 3 log(N) log(log(N)) and explain the information-theoretic 0.76 ceiling on inverse zero reconstruction. We discover 190 prime correlation patterns with twin primes at r = 0.997. Additionally, we find prime chains of length 8 on the primorial Δ=2310 highway.
 
 ---
 
@@ -337,45 +337,7 @@ L1 regularization doesn't exploit prime sparsity better than direct spectral met
 
 ---
 
-## 12. The Golden Ratio Connection
-
-### 12.1 Discovery: φ^n Aligns with Primes
-
-```
-φ = (1 + √5)/2 ≈ 1.618...
-
-When floor(φ^n) lands on or near a prime:
-  • 1.73× enrichment over random expectation!
-  • Statistical significance: χ² p < 0.001
-```
-
-### 12.2 Lucas Numbers are Prime-Enriched
-
-Lucas numbers L_n = φ^n + ψ^n have special spectral properties:
-
-| Position Type | Mean Interference |
-|--------------|-------------------|
-| Lucas numbers | -0.0163 (prime-like) |
-| Random positions | +0.0201 (composite-like) |
-| **Separation** | **0.0364** |
-
-Lucas primes: L_2=3, L_4=7, L_5=11, L_7=29, L_8=47...
-
-### 12.3 The φ-Prime Ladder
-
-Starting from small primes, computing p × φ and rounding:
-
-```
-2 → 3 → 5 → 8 → 13 → 21 → 34 → 55 → 89 → 144...
-
-Ratio of consecutive primes in ladder → φ
-```
-
-**The golden ratio φ is spectrally entangled with the primes!**
-
----
-
-## 13. The Grand Synthesis
+## 12. The Grand Synthesis
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -416,7 +378,7 @@ Ratio of consecutive primes in ladder → φ
 
 ---
 
-## 14. Conclusions
+## 13. Conclusions
 
 We have presented a complete characterization of spectral primality detection:
 
@@ -427,7 +389,6 @@ We have presented a complete characterization of spectral primality detection:
 5. **Inverse Limit:** Information-theoretic 0.76 ceiling
 6. **Correlations:** 190 patterns discovered, twins at r = 0.997
 7. **Highway Chains:** 8-prime chains found on Δ=2310 highway (spectral tunnel)
-8. **Golden Ratio:** φ^n → prime alignment at 1.73× enrichment; Lucas numbers are prime-enriched
 
 ---
 
