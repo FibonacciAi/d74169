@@ -595,6 +595,9 @@ class PrimeSonarRLM:
                 self._native_client = openai.OpenAI(**client_kwargs)
             except ImportError:
                 raise ImportError("openai package required: pip install openai")
+        elif self.backend == "gemini":
+            # Use REST API directly to avoid dependency issues
+            self._native_client = {"api_key": self.api_key, "model": self.model}
         else:
             raise ValueError(f"Native mode not supported for backend: {self.backend}")
 
@@ -709,6 +712,9 @@ Available Python functions (already imported):
                     messages=messages
                 )
                 assistant_text = response.content[0].text
+            elif self.backend == "gemini":
+                # Gemini uses REST API
+                assistant_text = self._call_gemini_api(messages)
             else:  # openai
                 response = self._native_client.chat.completions.create(
                     model=self.model,
@@ -769,20 +775,71 @@ Available Python functions (already imported):
                 break
 
         # Get final summary
+        final_messages = messages + [{"role": "user", "content": "Provide a final summary of findings."}]
+
         if self.backend == "anthropic":
             response = self._native_client.messages.create(
                 model=self.model,
                 max_tokens=4096,
-                messages=messages + [{"role": "user", "content": "Provide a final summary of findings."}]
+                messages=final_messages
             )
             return response.content[0].text
+        elif self.backend == "gemini":
+            return self._call_gemini_api(final_messages)
         else:
             response = self._native_client.chat.completions.create(
                 model=self.model,
                 max_tokens=4096,
-                messages=messages + [{"role": "user", "content": "Provide a final summary of findings."}]
+                messages=final_messages
             )
             return response.choices[0].message.content
+
+    def _call_gemini_api(self, messages: List[Dict]) -> str:
+        """Call Gemini API via REST."""
+        import urllib.request
+        import json as json_mod
+
+        api_key = self._native_client["api_key"]
+        model = self._native_client["model"]
+
+        # Convert messages to Gemini format
+        contents = []
+        for msg in messages:
+            role = "user" if msg["role"] == "user" else "model"
+            contents.append({
+                "role": role,
+                "parts": [{"text": msg["content"]}]
+            })
+
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+
+        payload = {
+            "contents": contents,
+            "generationConfig": {
+                "maxOutputTokens": 4096,
+                "temperature": 0.7
+            }
+        }
+
+        req = urllib.request.Request(
+            url,
+            data=json_mod.dumps(payload).encode('utf-8'),
+            headers={"Content-Type": "application/json"},
+            method="POST"
+        )
+
+        with urllib.request.urlopen(req, timeout=120) as resp:
+            result = json_mod.loads(resp.read().decode('utf-8'))
+
+        return result["candidates"][0]["content"]["parts"][0]["text"]
+
+    def _convert_to_gemini_format(self, messages: List[Dict]) -> str:
+        """Convert OpenAI-style messages to Gemini format (legacy)."""
+        parts = []
+        for msg in messages:
+            role = "User" if msg["role"] == "user" else "Assistant"
+            parts.append(f"{role}: {msg['content']}")
+        return "\n\n".join(parts)
 
     def _extract_code_blocks(self, text: str) -> List[str]:
         """Extract Python code blocks from markdown text."""
