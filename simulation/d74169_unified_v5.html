@@ -672,6 +672,89 @@
         .legend-dot.prime-power { background: var(--accent-violet); }
         .legend-dot.composite { background: rgba(255,255,255,0.1); }
 
+        /* === TESLA 369 MODE === */
+        .tesla-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-dim);
+            font-family: 'Geist Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s;
+            pointer-events: auto;
+            letter-spacing: 2px;
+        }
+
+        .tesla-btn:hover {
+            border-color: #ff9500;
+            color: #ff9500;
+        }
+
+        .tesla-btn.active {
+            background: linear-gradient(135deg, rgba(255,149,0,0.2), rgba(255,204,0,0.1));
+            border-color: #ff9500;
+            color: #ff9500;
+            box-shadow: 0 0 20px rgba(255,149,0,0.3);
+        }
+
+        .tesla-disclaimer {
+            display: none;
+            text-align: center;
+            font-size: 8px;
+            color: #ff9500;
+            margin-top: 8px;
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        .tesla-mode .tesla-disclaimer {
+            display: block;
+        }
+
+        .crystal-cell.tesla-harmonic {
+            position: relative;
+        }
+
+        .crystal-cell.tesla-harmonic::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            font-size: 6px;
+            animation: teslaSpark 1s infinite;
+        }
+
+        @keyframes teslaSpark {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .tesla-mode .crystal-cell.tesla-3 {
+            box-shadow: 0 0 10px rgba(255,149,0,0.7) !important;
+            border: 1px solid #ff9500 !important;
+        }
+
+        .tesla-mode .crystal-cell.tesla-6 {
+            box-shadow: 0 0 12px rgba(255,179,0,0.8) !important;
+            border: 1px solid #ffb300 !important;
+        }
+
+        .tesla-mode .crystal-cell.tesla-9 {
+            box-shadow: 0 0 14px rgba(255,204,0,0.9) !important;
+            border: 1px solid #ffcc00 !important;
+        }
+
+        .tesla-mode .crystal-cell.tesla-9.tesla-harmonic::after {
+            content: '\26A1';
+        }
+
         /* === PAGE CONTENT === */
         .page-content {
             display: none;
@@ -1113,6 +1196,7 @@
                 <span class="legend-item"><span class="legend-dot prime-power"></span> p<sup>k</sup></span>
                 <span class="legend-item"><span class="legend-dot composite"></span> Composite</span>
             </div>
+            <div class="tesla-disclaimer">"If you only knew the magnificence of 3, 6, 9..." — Tesla (apocryphal)</div>
         </div>
 
         <!-- INVERSE PAGE -->
@@ -1308,6 +1392,7 @@
 </div>
 
 <button class="archive-btn" id="btnArchive">⬡ Research Archive</button>
+<button class="tesla-btn" id="teslaBtn">3 6 9</button>
 
 <!-- ARCHIVE OVERLAY -->
 <div id="archiveOverlay">
@@ -1653,6 +1738,8 @@
     }
 
     // === CRYSTAL LATTICE ===
+    let teslaMode = false;
+
     function initCrystalLattice() {
         const grid = document.getElementById('crystalGrid');
         if (!grid) return;
@@ -1672,7 +1759,33 @@
                 cell.classList.add('prime-power');
             }
 
+            // Tesla 369 classes
+            if (n % 9 === 0) {
+                cell.classList.add('tesla-9', 'tesla-harmonic');
+            } else if (n % 6 === 0) {
+                cell.classList.add('tesla-6');
+            } else if (n % 3 === 0) {
+                cell.classList.add('tesla-3');
+            }
+
             grid.appendChild(cell);
+        }
+
+        // Tesla mode toggle
+        const teslaBtn = document.getElementById('teslaBtn');
+        if (teslaBtn) {
+            teslaBtn.addEventListener('click', () => {
+                teslaMode = !teslaMode;
+                teslaBtn.classList.toggle('active', teslaMode);
+                document.body.classList.toggle('tesla-mode', teslaMode);
+
+                if (teslaMode) {
+                    log('"If you knew the magnificence of 3, 6, 9..."', 'warning');
+                    log('Tesla Mode ON (aesthetic only, not physics)', '');
+                } else {
+                    log('Tesla Mode OFF', 'info');
+                }
+            });
         }
     }
 
