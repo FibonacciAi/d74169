@@ -69,6 +69,24 @@ from .advanced import (
     find_optimal_encoding,
 )
 
+# RLM integration (optional - requires 'pip install rlm')
+try:
+    from .rlm_agent import (
+        PrimeSonarRLM,
+        RLMResult,
+        create_repl_tools,
+        get_setup_code,
+        get_system_prompt,
+    )
+    HAS_RLM = True
+except ImportError:
+    HAS_RLM = False
+    PrimeSonarRLM = None
+    RLMResult = None
+    create_repl_tools = None
+    get_setup_code = None
+    get_system_prompt = None
+
 __all__ = [
     # Core
     'PrimeSonar',
@@ -99,4 +117,11 @@ __all__ = [
     # Data
     'BUNDLED_ZEROS',
     'HAS_NUMBA',
+    # RLM Integration
+    'PrimeSonarRLM',
+    'RLMResult',
+    'create_repl_tools',
+    'get_setup_code',
+    'get_system_prompt',
+    'HAS_RLM',
 ]

@@ -35,6 +35,8 @@ dependencies = [
 [project.optional-dependencies]
 fast = ["numba>=0.56.0"]
 full = ["numba>=0.56.0", "scipy>=1.7.0", "matplotlib>=3.4.0"]
+rlm = ["rlm>=0.1.0"]
+all = ["numba>=0.56.0", "scipy>=1.7.0", "matplotlib>=3.4.0", "rlm>=0.1.0"]
 
 [project.scripts]
 d74169 = "d74169.validation:full_validation"
