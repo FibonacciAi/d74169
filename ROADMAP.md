@@ -54,16 +54,29 @@ Now we push further. What else can we unlock?
 
 **Conclusion:** Δ=2310 remains optimal. Larger primorials decorrelate too fast.
 
-### 1.3 ML Architecture Upgrade ⬅️ NEXT
+### 1.3 ML Architecture Upgrade ✅ COMPLETE
 
-**Current:** Logistic regression, SVM → 75% ceiling
-**Try:** Transformer on spectral sequences
+**Tried:** Transformer + LSTM on raw spectral sequences
+
+**Results:**
+| Model | Test F1 | OOS F1 | Verdict |
+|-------|---------|--------|---------|
+| sklearn (RF+SMOTE) | ~0.50 | ~0.45 | BEST |
+| Transformer | 0.24 | 0.18 | Underperforms |
+| LSTM | 0.24 | 0.17 | Underperforms |
+
+**Key Insight:** Feature engineering > architecture
+- Handcrafted features (entropy, frequency bands) capture discriminative info
+- Raw spectral sequences lack the pre-computed statistics
+- Self-attention doesn't discover novel zero-zero patterns
+
+**Conclusion:** Stick with sklearn + engineered features.
 
 ---
 
 ## Phase 2: Medium-Term
 
-### 2.1 Quantum Simulation
+### 2.1 Quantum Simulation ⬅️ NEXT
 
 Implement H = xp on:
 - Qiskit simulator
@@ -111,6 +124,7 @@ Spectral approach to Zhang/Maynard results?
 | Jan 2026 | Removed Fibonacci numerology (not physics) |
 | Jan 2026 | **0.76 ceiling ablation COMPLETE** - data-limited, but Euler helps! |
 | Jan 2026 | **Primorial scan COMPLETE** - Δ=2310 optimal (phase drift) |
+| Jan 2026 | **ML upgrade COMPLETE** - sklearn beats Transformer (features > architecture) |
 
 ---
 
