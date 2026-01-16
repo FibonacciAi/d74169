@@ -1925,7 +1925,12 @@
 
     // === CANVAS SETUP ===
     const canvas = document.getElementById('glcanvas');
-    const gl = canvas.getContext('webgl', { antialias: true });
+    const gl = canvas.getContext('webgl', { antialias: true }) || canvas.getContext('experimental-webgl');
+
+    if (!gl) {
+        console.error('WebGL not supported');
+        document.body.innerHTML = '<div style="color:#fff;padding:50px;text-align:center;font-family:monospace;">WebGL not available. Please use a modern browser.</div>';
+    }
 
     // === NAVIGATION ===
     document.querySelectorAll('.nav-tab').forEach(tab => {
@@ -2671,6 +2676,9 @@
 
     // === WEBGL ===
     function drawScene(uLocs) {
+        gl.clearColor(0.01, 0.01, 0.02, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
         const cx = Math.sin(camera.theta) * Math.cos(camera.phi) * camera.radius;
         const cy = Math.sin(camera.phi) * camera.radius;
         const cz = Math.cos(camera.theta) * Math.cos(camera.phi) * camera.radius;
@@ -2759,15 +2767,24 @@
         const vs = gl.createShader(gl.VERTEX_SHADER);
         gl.shaderSource(vs, document.getElementById(vsId).textContent);
         gl.compileShader(vs);
+        if (!gl.getShaderParameter(vs, gl.COMPILE_STATUS)) {
+            console.error('Vertex shader error:', gl.getShaderInfoLog(vs));
+        }
 
         const fs = gl.createShader(gl.FRAGMENT_SHADER);
         gl.shaderSource(fs, document.getElementById(fsId).textContent);
         gl.compileShader(fs);
+        if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) {
+            console.error('Fragment shader error:', gl.getShaderInfoLog(fs));
+        }
 
         const p = gl.createProgram();
         gl.attachShader(p, vs);
         gl.attachShader(p, fs);
         gl.linkProgram(p);
+        if (!gl.getProgramParameter(p, gl.LINK_STATUS)) {
+            console.error('Program link error:', gl.getProgramInfoLog(p));
+        }
         return p;
     }
 
@@ -2779,6 +2796,8 @@
 
     // === MAIN ===
     function init() {
+        if (!gl) return;
+
         resize();
         window.addEventListener('resize', resize);
 
@@ -2787,6 +2806,10 @@
         initCrystalLattice();
 
         const prog = createProgram('vs', 'fs');
+        if (!prog) {
+            console.error('Failed to create WebGL program');
+            return;
+        }
         gl.useProgram(prog);
 
         const buf = gl.createBuffer();
