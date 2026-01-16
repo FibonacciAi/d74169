@@ -1724,10 +1724,22 @@
     uniform float uStateWidth;
     uniform float uTopologicalIndex;
 
-    #define MAX_STEPS 100
-    #define SURF_DIST 0.002
-    #define MAX_DIST 60.0
+    #define MAX_STEPS 120
+    #define SURF_DIST 0.001
+    #define MAX_DIST 80.0
     #define PI 3.14159265359
+
+    // Riemann zeros approximation for visual effect
+    float riemannWave(float x, float t) {
+        float wave = 0.0;
+        // First few Riemann zeros: 14.13, 21.02, 25.01, 30.42, 32.94
+        wave += 0.15 * sin(14.13 * log(max(abs(x) + 1.0, 1.0)) + t * 0.5);
+        wave += 0.12 * sin(21.02 * log(max(abs(x) + 1.0, 1.0)) + t * 0.7);
+        wave += 0.10 * sin(25.01 * log(max(abs(x) + 1.0, 1.0)) + t * 0.3);
+        wave += 0.08 * sin(30.42 * log(max(abs(x) + 1.0, 1.0)) + t * 0.9);
+        wave += 0.06 * sin(32.94 * log(max(abs(x) + 1.0, 1.0)) + t * 0.6);
+        return wave;
+    }
 
     float getBeta(float t) {
         return uBetaBase + uAmp * sin(uOmega * t);
@@ -1739,25 +1751,30 @@
         float M_star = beta / (2.0 * uAlpha);
         float residual = uR - (beta * beta) / (4.0 * uAlpha);
 
-        float valX = uAlpha * pow(p.x - M_star, 2.0);
-        float valZ = 0.08 * p.z * p.z;
+        // Main potential well
+        float valX = uAlpha * 0.3 * pow(p.x - M_star, 2.0);
+        float valZ = 0.05 * p.z * p.z;
 
+        // Riemann spectral oscillations
+        float spectral = riemannWave(p.x, t) * exp(-0.05 * p.z * p.z);
+
+        // Floquet driving
         float floquet = 0.0;
         if(uAmp > 0.1) {
-            floquet = 0.15 * uAmp * sin(3.0 * p.x + uOmega * t) * exp(-0.1 * p.z * p.z);
+            floquet = 0.2 * uAmp * sin(2.5 * p.x + uOmega * t) * exp(-0.08 * p.z * p.z);
         }
 
-        return valX + valZ + residual + floquet;
+        return valX + valZ + residual * 0.5 + spectral + floquet;
     }
 
     float GetDist(vec3 p) {
         float height = getPotentialHeight(p);
-        return (p.y - height) * 0.6;
+        return (p.y - height) * 0.5;
     }
 
     vec3 GetNormal(vec3 p) {
         float d = GetDist(p);
-        vec2 e = vec2(0.01, 0);
+        vec2 e = vec2(0.005, 0);
         vec3 n = d - vec3(GetDist(p - e.xyy), GetDist(p - e.yxy), GetDist(p - e.yyx));
         return normalize(n);
     }
@@ -1765,26 +1782,43 @@
     float GetShadow(vec3 ro, vec3 rd, float mint, float maxt, float k) {
         float res = 1.0;
         float t = mint;
-        for(int i = 0; i < 64; i++) {
+        for(int i = 0; i < 48; i++) {
             if(t > maxt) break;
             float h = GetDist(ro + rd * t);
-            if(h < 0.001) return 0.0;
+            if(h < 0.001) return 0.1;
             res = min(res, k * h / t);
-            t += h;
+            t += h * 0.8;
         }
-        return res;
+        return clamp(res, 0.1, 1.0);
     }
 
     float GetAO(vec3 p, vec3 n) {
         float occ = 0.0;
         float sca = 1.0;
         for(int i=0; i<5; i++) {
-            float h = 0.01 + 0.1 * float(i) / 4.0;
+            float h = 0.02 + 0.12 * float(i) / 4.0;
             float d = GetDist(p + n * h);
             occ += (h - d) * sca;
-            sca *= 0.9;
+            sca *= 0.85;
         }
-        return clamp(1.0 - 2.5 * occ, 0.0, 1.0);
+        return clamp(1.0 - 1.5 * occ, 0.0, 1.0);
+    }
+
+    // Glow for detected prime positions
+    float primeGlow(vec3 p, float t) {
+        float glow = 0.0;
+        // Mark prime positions with glowing spheres
+        float primes[10];
+        primes[0] = 2.0; primes[1] = 3.0; primes[2] = 5.0; primes[3] = 7.0; primes[4] = 11.0;
+        primes[5] = 13.0; primes[6] = 17.0; primes[7] = 19.0; primes[8] = 23.0; primes[9] = 29.0;
+
+        for(int i = 0; i < 10; i++) {
+            float px = (primes[i] - 15.0) * 0.4;  // Center around x=0
+            float dist = length(vec2(p.x - px, p.z));
+            float pulse = 0.7 + 0.3 * sin(t * 2.0 + float(i) * 0.7);
+            glow += pulse * 0.3 * exp(-dist * dist * 2.0);
+        }
+        return glow;
     }
 
     void main() {
@@ -1799,83 +1833,128 @@
         float dO = 0.0;
         bool hit = false;
         vec3 p = vec3(0);
+        int steps = 0;
 
         for(int i = 0; i < MAX_STEPS; i++) {
             p = ro + rd * dO;
             float dS = GetDist(p);
             if(abs(dS) < SURF_DIST) { hit = true; break; }
             if(dO > MAX_DIST) break;
-            dO += dS;
+            dO += dS * 0.9;
+            steps = i;
         }
 
+        // Rich dark blue-purple gradient background
         vec3 bg = mix(
-            vec3(0.01, 0.01, 0.03),
-            vec3(0.03, 0.04, 0.08),
-            uv.y + 0.5
+            vec3(0.02, 0.02, 0.06),
+            vec3(0.05, 0.03, 0.12),
+            uv.y * 0.5 + 0.5
         );
 
-        float bgGrid = smoothstep(0.48, 0.5, abs(fract(uv.x * 10.0) - 0.5)) *
-                       smoothstep(0.48, 0.5, abs(fract(uv.y * 10.0) - 0.5));
-        bg += vec3(0.01) * bgGrid;
+        // Subtle grid overlay
+        float bgGrid = smoothstep(0.47, 0.5, abs(fract(uv.x * 12.0) - 0.5)) *
+                       smoothstep(0.47, 0.5, abs(fract(uv.y * 12.0) - 0.5));
+        bg += vec3(0.0, 0.02, 0.03) * bgGrid;
+
+        // Radial glow in center
+        float centerGlow = exp(-length(uv) * 1.5);
+        bg += vec3(0.0, 0.05, 0.1) * centerGlow;
 
         vec3 col = bg;
 
         if(hit) {
             vec3 n = GetNormal(p);
-            vec3 l = normalize(vec3(4.0, 12.0, 4.0) - p);
+            vec3 l1 = normalize(vec3(5.0, 15.0, 5.0) - p);
+            vec3 l2 = normalize(vec3(-4.0, 8.0, -3.0) - p);
             vec3 v = normalize(ro - p);
-            vec3 h = normalize(l + v);
+            vec3 h1 = normalize(l1 + v);
+            vec3 h2 = normalize(l2 + v);
 
-            float diff = max(dot(n, l), 0.0);
-            float spec = pow(max(dot(n, h), 0.0), 32.0);
-            float amb = 0.5 + 0.5 * n.y;
-            float fres = pow(1.0 - max(dot(n, v), 0.0), 3.0);
+            // Two-light setup
+            float diff1 = max(dot(n, l1), 0.0);
+            float diff2 = max(dot(n, l2), 0.0) * 0.5;
+            float spec1 = pow(max(dot(n, h1), 0.0), 48.0);
+            float spec2 = pow(max(dot(n, h2), 0.0), 32.0);
+            float amb = 0.4 + 0.6 * n.y;
+            float fres = pow(1.0 - max(dot(n, v), 0.0), 4.0);
 
-            float shadow = GetShadow(p + n * 0.02, l, 0.05, 8.0, 6.0);
+            float shadow = GetShadow(p + n * 0.03, l1, 0.05, 12.0, 8.0);
             float ao = GetAO(p, n);
 
+            // Height-based coloring - cyan to magenta gradient
             float height = p.y;
             vec3 baseCol = mix(
-                vec3(0.0, 0.15, 0.25),
-                vec3(0.0, 0.6, 0.8),
-                smoothstep(-1.0, 2.0, height)
+                vec3(0.0, 0.6, 0.8),   // Cyan at low
+                vec3(0.0, 0.9, 1.0),   // Bright cyan
+                smoothstep(-0.5, 1.5, height)
             );
-            baseCol = mix(baseCol, vec3(0.2, 0.0, 0.3), smoothstep(2.0, 6.0, height));
+            baseCol = mix(baseCol, vec3(0.8, 0.0, 0.6), smoothstep(1.5, 4.0, height));  // Magenta at high
+            baseCol = mix(baseCol, vec3(1.0, 0.3, 0.8), smoothstep(4.0, 6.0, height));  // Pink at peak
 
-            if(uAmp > 0.5) {
-                float topoColor = 0.5 + 0.5 * sin(uTime * 2.0);
-                baseCol = mix(baseCol, vec3(0.8, 0.0, 0.4), uAmp * 0.15 * topoColor);
+            // Floquet mode coloring
+            if(uAmp > 0.3) {
+                float topoColor = 0.5 + 0.5 * sin(uTime * 2.5);
+                vec3 floquetColor = mix(vec3(1.0, 0.0, 0.5), vec3(0.5, 0.0, 1.0), topoColor);
+                baseCol = mix(baseCol, floquetColor, uAmp * 0.3);
             }
 
-            float gx = abs(fract(p.x * 1.5) - 0.5);
-            float gz = abs(fract(p.z * 1.5) - 0.5);
-            float grid = smoothstep(0.46, 0.48, max(gx, gz));
-            baseCol += grid * vec3(0.0, 0.3, 0.4) * 0.5;
+            // Neon grid lines
+            float gx = abs(fract(p.x * 1.0) - 0.5);
+            float gz = abs(fract(p.z * 1.0) - 0.5);
+            float grid = smoothstep(0.44, 0.48, max(gx, gz));
+            baseCol += grid * vec3(0.0, 0.5, 0.6) * 0.6;
 
+            // Prime position glow
+            float pGlow = primeGlow(p, uTime);
+            baseCol += vec3(0.0, 1.0, 0.6) * pGlow * 2.0;
+
+            // Lighting
             vec3 lin = vec3(0.0);
-            lin += 1.0 * diff * vec3(1.0, 0.95, 0.9) * shadow;
-            lin += 0.4 * amb * vec3(0.1, 0.15, 0.25) * ao;
-            lin += 0.15 * spec * vec3(1.0) * shadow;
-            lin += 0.2 * fres * vec3(0.0, 0.5, 0.7);
+            lin += 1.2 * diff1 * vec3(1.0, 0.98, 0.95) * shadow;
+            lin += 0.6 * diff2 * vec3(0.6, 0.8, 1.0);
+            lin += 0.5 * amb * vec3(0.15, 0.2, 0.35) * ao;
+            lin += 0.4 * spec1 * vec3(1.0, 1.0, 1.0) * shadow;
+            lin += 0.2 * spec2 * vec3(0.5, 0.7, 1.0);
+            lin += 0.4 * fres * vec3(0.0, 0.7, 1.0);
 
             col = baseCol * lin;
 
+            // Quantum state wavefunction visualization
             float distToState = length(p.x - uStatePos.x);
             float distZ = abs(p.z);
             float density = exp(-(distToState*distToState) / (2.0 * uStateWidth * uStateWidth));
-            density *= exp(-(distZ*distZ) / 1.5);
+            density *= exp(-(distZ*distZ) / 1.2);
 
-            vec3 stateColor = mix(vec3(1.0, 0.1, 0.4), vec3(0.4, 0.0, 1.0), 0.5 + 0.5 * sin(uTime * 3.0));
-            col += stateColor * density * 1.5;
+            vec3 stateColor = mix(vec3(1.0, 0.0, 0.5), vec3(0.5, 0.0, 1.0), 0.5 + 0.5 * sin(uTime * 3.0));
+            col += stateColor * density * 2.5;
 
-            col = mix(col, bg, 1.0 - exp(-0.003 * dO * dO));
+            // Edge glow
+            col += vec3(0.0, 0.3, 0.5) * fres * 0.8;
+
+            // Atmospheric fog
+            col = mix(col, bg, 1.0 - exp(-0.002 * dO * dO));
         }
 
-        float vign = 1.0 - 0.4 * length(uv);
+        // Volumetric glow from raymarching
+        float marchGlow = float(steps) / float(MAX_STEPS);
+        col += vec3(0.0, 0.1, 0.15) * marchGlow * 0.5;
+
+        // Vignette
+        float vign = 1.0 - 0.35 * pow(length(uv), 1.5);
         col *= vign;
 
-        col = col / (1.0 + col);
-        col = pow(col, vec3(0.4545));
+        // Subtle scanlines
+        float scan = 0.97 + 0.03 * sin(gl_FragCoord.y * 1.5);
+        col *= scan;
+
+        // Tone mapping and gamma
+        col = col / (0.8 + col);
+        col = pow(col, vec3(0.45));
+
+        // Subtle chromatic aberration at edges
+        float ca = length(uv) * 0.003;
+        col.r *= 1.0 + ca;
+        col.b *= 1.0 - ca;
 
         gl_FragColor = vec4(col, 1.0);
     }
@@ -1902,14 +1981,14 @@
 
     // === STATE ===
     const state = {
-        alpha: 1.5, beta: 0.0, r: 1.0, omega: 2.0, amp: 0.0,
+        alpha: 1.2, beta: 0.5, r: 0.8, omega: 2.0, amp: 0.3,
         time: 0, particleX: 0, particleV: 0, width: 0.5,
         paused: false, topologicalIndex: 0
     };
 
     const camera = {
-        theta: 0.5, phi: 0.45, radius: 16.0,
-        target: {x: 0, y: 1.5, z: 0},
+        theta: 0.8, phi: 0.35, radius: 12.0,
+        target: {x: 0, y: 0.8, z: 0},
         dragging: false, lastX: 0, lastY: 0
     };
 
