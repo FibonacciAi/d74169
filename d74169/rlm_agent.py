@@ -464,38 +464,97 @@ class PrimeSonarRLM:
         environment: str = "local",
         verbose: bool = True,
         api_key: Optional[str] = None,
+        base_url: Optional[str] = None,
+        client: Optional[Any] = None,
+        use_native: bool = False,
         **backend_kwargs
     ):
+        """
+        Initialize PrimeSonarRLM agent.
+
+        Parameters
+        ----------
+        backend : str
+            LLM provider: "anthropic", "openai", "openrouter", "litellm"
+        model : str
+            Model identifier
+        max_depth : int
+            Maximum recursion depth for RLM
+        environment : str
+            REPL sandbox: "local", "docker", "modal"
+        verbose : bool
+            Print progress
+        api_key : str, optional
+            API key (auto-detects from env if not provided)
+        base_url : str, optional
+            Custom API base URL (auto-detects ANTHROPIC_BASE_URL from env)
+        client : Any, optional
+            Pre-configured API client to use directly
+        use_native : bool
+            Use native recursive analysis without RLM library
+        **backend_kwargs
+            Additional kwargs passed to RLM backend
+        """
+        import os
+
         self.backend = backend
         self.model = model
         self.max_depth = max_depth
         self.environment = environment
         self.verbose = verbose
-        self.api_key = api_key
+        self.client = client
+        self.use_native = use_native
         self.backend_kwargs = backend_kwargs
 
+        # Auto-detect API key from environment
+        if api_key:
+            self.api_key = api_key
+        elif backend == "anthropic":
+            self.api_key = os.environ.get("ANTHROPIC_API_KEY")
+        elif backend == "openai":
+            self.api_key = os.environ.get("OPENAI_API_KEY")
+        else:
+            self.api_key = None
+
+        # Auto-detect base URL from environment
+        if base_url:
+            self.base_url = base_url
+        elif backend == "anthropic":
+            self.base_url = os.environ.get("ANTHROPIC_BASE_URL")
+        elif backend == "openai":
+            self.base_url = os.environ.get("OPENAI_BASE_URL")
+        else:
+            self.base_url = None
+
         self._rlm = None
+        self._native_client = None
         self._initialized = False
 
     def _ensure_initialized(self):
-        """Lazy initialization of RLM client."""
+        """Lazy initialization of RLM client or native client."""
         if self._initialized:
             return
 
+        # If using native mode, set up direct Anthropic/OpenAI client
+        if self.use_native or self.client is not None:
+            self._init_native()
+            return
+
+        # Try RLM library
         try:
             from rlm import RLM
         except ImportError:
-            raise ImportError(
-                "RLM library not installed. Install with:\n"
-                "  pip install rlm\n"
-                "Or from source:\n"
-                "  git clone https://github.com/alexzhang13/rlm && cd rlm && pip install -e ."
-            )
+            if self.verbose:
+                print("RLM library not found, falling back to native mode...")
+            self._init_native()
+            return
 
         # Build backend kwargs
         kwargs = {"model_name": self.model, **self.backend_kwargs}
         if self.api_key:
             kwargs["api_key"] = self.api_key
+        if self.base_url:
+            kwargs["base_url"] = self.base_url
 
         self._rlm = RLM(
             backend=self.backend,
@@ -506,6 +565,41 @@ class PrimeSonarRLM:
             verbose=self.verbose
         )
         self._initialized = True
+
+    def _init_native(self):
+        """Initialize native client for direct API calls without RLM library."""
+        if self.client is not None:
+            self._native_client = self.client
+            self._initialized = True
+            return
+
+        if self.backend == "anthropic":
+            try:
+                import anthropic
+                client_kwargs = {}
+                if self.api_key:
+                    client_kwargs["api_key"] = self.api_key
+                if self.base_url:
+                    client_kwargs["base_url"] = self.base_url
+                self._native_client = anthropic.Anthropic(**client_kwargs)
+            except ImportError:
+                raise ImportError("anthropic package required: pip install anthropic")
+        elif self.backend == "openai":
+            try:
+                import openai
+                client_kwargs = {}
+                if self.api_key:
+                    client_kwargs["api_key"] = self.api_key
+                if self.base_url:
+                    client_kwargs["base_url"] = self.base_url
+                self._native_client = openai.OpenAI(**client_kwargs)
+            except ImportError:
+                raise ImportError("openai package required: pip install openai")
+        else:
+            raise ValueError(f"Native mode not supported for backend: {self.backend}")
+
+        self._initialized = True
+        self.use_native = True
 
     def analyze(
         self,
@@ -536,18 +630,30 @@ class PrimeSonarRLM:
         """
         self._ensure_initialized()
 
+        import time
+        start_time = time.time()
+
         # Build full prompt
         full_prompt = SYSTEM_PROMPT + "\n\n"
         if context:
             full_prompt += f"Context: {context}\n\n"
         full_prompt += f"Query: {query}"
 
+        # Use native mode if RLM not available
+        if self.use_native:
+            response = self._analyze_native(query, max_depth or self.max_depth)
+            elapsed = time.time() - start_time
+            return RLMResult(
+                response=response,
+                logs=[],
+                execution_time=elapsed,
+                chunks_analyzed=0,
+                depth=max_depth or self.max_depth
+            )
+
         # Override depth if specified
         if max_depth is not None:
             self._rlm.max_depth = max_depth
-
-        import time
-        start_time = time.time()
 
         # Execute RLM completion
         result = self._rlm.completion(full_prompt)
@@ -561,6 +667,129 @@ class PrimeSonarRLM:
             chunks_analyzed=getattr(result, 'chunks_analyzed', 0),
             depth=getattr(result, 'depth', 0)
         )
+
+    def _analyze_native(self, query: str, max_depth: int) -> str:
+        """
+        Native analysis using direct API calls with tool use.
+        Implements recursive prime analysis without RLM library.
+        """
+        tools = create_repl_tools()
+
+        # Build tool descriptions for the model
+        tool_descriptions = """
+Available Python functions (already imported):
+- scan_primes(start, end) -> dict with 'primes', 'count', 'density'
+- find_twin_primes(start, end) -> dict with 'twins', 'count', 'density'
+- find_prime_gaps(start, end) -> dict with 'gaps', 'max_gap', 'avg_gap'
+- find_sophie_germain(start, end) -> dict with 'germain', 'count'
+- find_prime_triplets(start, end) -> dict with 'triplets', 'count'
+- goldbach_decompose(n) -> dict with 'pairs', 'count'
+- analyze_region(start, end) -> comprehensive dict with all metrics
+- compare_regions(*ranges) -> compare multiple (start, end) tuples
+- chunk_range(start, end, n) -> list of (start, end) chunk tuples
+"""
+
+        messages = [
+            {
+                "role": "user",
+                "content": f"{SYSTEM_PROMPT}\n\n{tool_descriptions}\n\nQuery: {query}\n\nProvide Python code to analyze this, then I'll run it and show you the results."
+            }
+        ]
+
+        all_outputs = []
+
+        for depth in range(max_depth):
+            if self.verbose:
+                print(f"[Depth {depth + 1}/{max_depth}] Querying model...")
+
+            if self.backend == "anthropic":
+                response = self._native_client.messages.create(
+                    model=self.model,
+                    max_tokens=4096,
+                    messages=messages
+                )
+                assistant_text = response.content[0].text
+            else:  # openai
+                response = self._native_client.chat.completions.create(
+                    model=self.model,
+                    max_tokens=4096,
+                    messages=messages
+                )
+                assistant_text = response.choices[0].message.content
+
+            messages.append({"role": "assistant", "content": assistant_text})
+
+            # Extract and execute code blocks
+            code_blocks = self._extract_code_blocks(assistant_text)
+
+            if not code_blocks:
+                # No more code to execute, return final response
+                return assistant_text
+
+            # Execute code blocks
+            exec_results = []
+            for code in code_blocks:
+                try:
+                    # Create execution namespace with tools
+                    namespace = dict(tools)
+                    namespace['np'] = __import__('numpy')
+
+                    # Capture output
+                    import io
+                    import sys
+                    old_stdout = sys.stdout
+                    sys.stdout = io.StringIO()
+
+                    exec(code, namespace)
+
+                    output = sys.stdout.getvalue()
+                    sys.stdout = old_stdout
+
+                    # Also capture any result variables
+                    result_vars = {k: v for k, v in namespace.items()
+                                   if k not in tools and not k.startswith('_') and k != 'np'}
+
+                    if output:
+                        exec_results.append(f"Output:\n{output}")
+                    if result_vars:
+                        exec_results.append(f"Variables: {result_vars}")
+
+                except Exception as e:
+                    exec_results.append(f"Error: {e}")
+                    sys.stdout = old_stdout
+
+            if exec_results:
+                all_outputs.extend(exec_results)
+                result_text = "\n".join(exec_results)
+                messages.append({
+                    "role": "user",
+                    "content": f"Execution results:\n{result_text}\n\nContinue analysis or provide final summary."
+                })
+            else:
+                break
+
+        # Get final summary
+        if self.backend == "anthropic":
+            response = self._native_client.messages.create(
+                model=self.model,
+                max_tokens=4096,
+                messages=messages + [{"role": "user", "content": "Provide a final summary of findings."}]
+            )
+            return response.content[0].text
+        else:
+            response = self._native_client.chat.completions.create(
+                model=self.model,
+                max_tokens=4096,
+                messages=messages + [{"role": "user", "content": "Provide a final summary of findings."}]
+            )
+            return response.choices[0].message.content
+
+    def _extract_code_blocks(self, text: str) -> List[str]:
+        """Extract Python code blocks from markdown text."""
+        import re
+        pattern = r'```python\n(.*?)```'
+        matches = re.findall(pattern, text, re.DOTALL)
+        return matches
 
     def scan(
         self,
