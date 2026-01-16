@@ -88,19 +88,21 @@ This is **direct computational evidence for the Hilbert-Pólya conjecture**—th
 ## 4. Phase Steering Conjecture (Dark Fringe Mechanism)
 
 ### What We Found
-**The d74169 Conjecture (Phase Steering):** For all n ≥ 2, n is prime if and only if:
+**The d74169 Conjecture (Phase Steering):** Primes tend to have:
 
 ```
 Re[ Σⱼ e^(iγⱼ log n) / √(1/4 + γⱼ²) ] < 0
 ```
 
-The weighted phasor sum of Riemann zeros has **NEGATIVE real projection** at prime positions.
+The weighted phasor sum points toward negative real axis at primes more often than composites.
+
+**Important clarification:** This is a *statistical* property (Cohen's d ≈ -0.21), not a perfect classifier. A simple threshold test achieves only ~50% accuracy. The effective detection mechanism uses **ranking** by score, not a sign threshold.
 
 ### Why It Matters
 This reveals the **mechanism** behind prime detection:
 - Primes aren't where all wave phases cancel (naive destructive interference)
-- Primes are where the **resultant phasor points backward** (negative real axis)
-- The -2/log(n) factor in S(n) inverts this to a positive score
+- Primes are where the **resultant phasor tends to point backward** (negative real axis)
+- The -2/log(n) factor in S(n) inverts this for the score function
 
 ### Physical Analogy: Phased Array Antenna
 - Each Riemann zero contributes a **weighted wave** (lower zeros dominate)
@@ -126,7 +128,7 @@ This reveals the **mechanism** behind prime detection:
 
 ---
 
-## 5. 100% Prime Detection with 14 Zeros (Score Function)
+## 5. Prime Detection with Riemann Zeros (Score Function)
 
 ### What We Found
 The score function:
@@ -135,10 +137,10 @@ The score function:
 S(n) = -2/log(n) × Σⱼ cos(γⱼ·log n) / √(0.25 + γⱼ²)
 ```
 
-achieves **perfect classification** of primes vs composites up to n≈500 using only 14 zeros.
+Using **adaptive ranking** (selecting top candidates by score), achieves high recall for primes. **Note**: A simple threshold S(n) > 0 achieves only ~53% accuracy; the effective detection requires ranking-based selection.
 
 ### Why It Matters
-This is absurdly efficient. 14 numbers encode the primality of hundreds of integers. It's a working proof-of-concept that primes are literally encoded in zeros.
+The score function creates a statistical separation (Cohen's d ≈ -1.58) between primes and composites. Primes tend to have higher scores, enabling detection through ranking.
 
 ### Real-World Applications
 - **Fast primality testing:** O(k) operations where k = number of zeros needed

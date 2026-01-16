@@ -303,6 +303,52 @@
             color: var(--green);
         }
 
+        /* Navigation cards */
+        .nav-cards {
+            margin-bottom: 48px;
+        }
+
+        .nav-card {
+            text-decoration: none;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.2);
+        }
+
+        .nav-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .nav-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--accent);
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-card h3 {
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .nav-card p {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
         .insight-box {
             background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
             border: 1px solid var(--accent);
@@ -462,6 +508,36 @@
         <div class="conjecture">
             <strong>The @D74169 Conjecture:</strong> The Riemann zeta zeros holographically encode the prime numbers. The duality goes both ways.
         </div>
+
+        <section class="nav-cards">
+            <h2>Explore</h2>
+            <div class="feature-grid">
+                <a href="../simulation/d74169_unified_v5.html" class="feature-card nav-card">
+                    <div class="nav-icon">🌀</div>
+                    <h3>3D Simulation</h3>
+                    <p>Interactive WebGL visualization of Riemann zero interference patterns and prime detection.</p>
+                    <span class="nav-badge">MAIN</span>
+                </a>
+                <a href="../simulation/d74169_simulation.html" class="feature-card nav-card">
+                    <div class="nav-icon">📊</div>
+                    <h3>Classic Simulation</h3>
+                    <p>Original 2D visualization with score plots and prime highlighting.</p>
+                    <span class="nav-badge">V1</span>
+                </a>
+                <a href="gallery.html" class="feature-card nav-card">
+                    <div class="nav-icon">🔬</div>
+                    <h3>Research Gallery</h3>
+                    <p>Explore all research visualizations: attention maps, gap predictions, quantum analysis, and more.</p>
+                    <span class="nav-badge">16 FIGS</span>
+                </a>
+                <a href="https://github.com/FibonacciAi/d74169/blob/main/research/FINDINGS.md" class="feature-card nav-card">
+                    <div class="nav-icon">📄</div>
+                    <h3>Full Paper</h3>
+                    <p>Complete research findings, methodology, and mathematical proofs.</p>
+                    <span class="nav-badge">PDF</span>
+                </a>
+            </div>
+        </section>
 
         <section>
             <h2>What is this?</h2>
