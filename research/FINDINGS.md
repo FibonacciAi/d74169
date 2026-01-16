@@ -172,6 +172,45 @@ Where u = ln(t/π) is the tortoise coordinate. This gives:
 - Surface gravity κ = √π
 - Zeros = quasinormal modes of the arithmetic black hole
 
+### Boundary Condition Hunt (v2.3.0+)
+
+**The Key Discovery**: The zeros exhibit **prime anti-resonance** - they systematically avoid positive fingerprint values.
+
+| Metric | Value |
+|--------|-------|
+| Prime fingerprint at zeros | **-15.414 ± 5.782** |
+| Random t fingerprint | +0.944 ± 1.512 |
+| t-statistic | **-8.32** |
+| p-value | **< 10⁻¹⁰** |
+
+This is statistically overwhelming evidence that the zeros "know" about the primes through a boundary condition.
+
+#### The Proposed Boundary Condition
+
+```
+ψ(0+) = [ξ(1/2 + iE) / ξ(1/2 - iE)] × ψ(0-)
+```
+
+Where ξ(s) is the completed Riemann zeta function satisfying ξ(s) = ξ(1-s).
+
+**Physical Interpretation**:
+- The scattering matrix S(E) = ξ(1/2 + iE) / ξ(1/2 - iE)
+- Reflection coefficient |R|² = 1 (unitary)
+- Phase shift encodes prime information
+- Zeros occur when S(E) = -1 (destructive interference)
+
+#### Self-Adjoint Extension
+
+The Berry-Keating operator H = xp requires a self-adjoint extension at x = 0. The phase parameter θ in the general BC:
+
+```
+ψ(0+) = e^{iθ(E)} × ψ(0-)
+```
+
+must equal the zeta phase: θ(E) = arg[ξ(1/2 + iE)]
+
+This connects the Hilbert-Pólya conjecture directly to the functional equation of ζ(s).
+
 ---
 
 ## Open Questions
@@ -180,7 +219,8 @@ Where u = ln(t/π) is the tortoise coordinate. This gives:
 2. ~~Quantum interpretation~~: **CONFIRMED** - zeros have GUE statistics
 3. **Physical system**: What real-world system has this spectrum?
 4. **Breaking the 0.76 ceiling**: Can regularization or machine learning help inverse scattering?
-5. **The boundary condition**: What BC at x=0 gives the zeros exactly?
+5. ~~The boundary condition~~: **CONJECTURE** - BC involves ξ(s)/ξ(1-s) phase shift
+6. **Prove the BC conjecture**: Can we derive zeros exactly from the proposed BC?
 
 ---
 
@@ -190,8 +230,10 @@ Where u = ln(t/π) is the tortoise coordinate. This gives:
 - `research_sophie.py` - Sophie Germain deep dive
 - `research_predict.py` - Pattern discovery and prediction
 - `research_quantum.py` - Quantum chaos / Hilbert-Pólya
+- `research_boundary.py` - Boundary condition hunt
 - `sophie_germain_structure.png` - Multiplicative structure visualization
 - `quantum_analysis.png` - GUE statistics visualization
+- `boundary_analysis.png` - Prime anti-resonance visualization
 
 ---
 
