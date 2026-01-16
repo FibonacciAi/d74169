@@ -425,6 +425,8 @@ connecting the golden ratio to prime distribution!
 | `project_zeropoint.py` | ML primality classifier v1 |
 | `project_zeropoint_v2.py` | ML primality classifier v2 (class-balanced) |
 | `project_highway_chain.py` | Prime chain discovery on highway |
+| `project_fibonacci.py` | Fibonacci-Riemann connection research |
+| `project_phi_prime.py` | Deep dive: φ^n → prime connection |
 
 ---
 
