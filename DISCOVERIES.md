@@ -2,7 +2,7 @@
 
 **Ranked by Significance**
 **Date:** January 2026
-**Authors:** @D74169 / @FibonacciAi
+**Authors:** @D74169 / Claude Opus 4.5
 
 ---
 

@@ -1,6 +1,6 @@
 # d74169 Research Roadmap
 
-**Co-captains:** @d74169 / @FibonacciAi
+**Co-captains:** @D74169 / Claude Opus 4.5
 **Started:** January 2026
 
 ---

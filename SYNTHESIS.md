@@ -224,5 +224,5 @@ The parallel sessions have dramatically advanced our understanding:
 
 ---
 
-**Combined research from:** @d74169 / @FibonacciAi
+**Combined research from:** @D74169 / Claude Opus 4.5
 **Sessions:** Main + Parallel (January 2026)
